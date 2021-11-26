@@ -18,6 +18,7 @@ let accuracy = 0;
 let typedCharacter = 0;
 let timer = null;
 let hasStarted = false;
+let wpm = 0; 
 
 initializeTest({ timeLimit: TIME_LIMIT, text: TEXT });
 
@@ -26,7 +27,8 @@ textArea.addEventListener("input", update);
 // hasanzadeh
 function initializeTest({ timeLimit, text }) {
   // TODO: Complete this function
-  document.getElementById('time').innerText = timeLeft;
+  timeLeft = timeLimit;
+  timerText.innerText = timeLeft;
   text.split('').forEach(character => {
     let span = document.createElement('SPAN');
     span.innerText = character;
@@ -43,57 +45,87 @@ function update() {
   updateCharactersStatus();
   updateErrors();
   updateAccuracy();
+  updateWpm();
 }
 // hasanzadeh
 function updateCharactersStatus() {
   // TODO: Complete this function
-  const charArr = typeText.children;
-  let userChar = textArea.value.trim();
-  for (let i = 0; i < userChar.length; i++) {
-    let char = charArr[i].innerText;
-    if(char === userChar[i]) {
-      charArr[i].classList = 'correct-char';
-    }else if (char !== userChar[i]){
-      charArr[i].classList = 'incorrect-char';
-      errors = errors++;
-    }else {
-      charArr[i].classList = '';
+  let textchars = typeText.childNodes;
+  let userChars = textArea.value;
+  for (let i = 0; i < userChars.length; i++) {
+    let char = textchars[i].innerText;
+    if(char !== userChars[i]) {
+      textchars[i].classList = 'incorrect-char';
+    } else if (char === userChars[i]) {
+      textchars[i].classList = 'correct-char';
+    } else if(userChars[i] === '') {
+      textchars[i].classList = '';
     }
   }
-  errorText.innerHTML = errors;
+  errors = document.getElementsByClassName('incorrect-char').length;
 }
 
 function updateAccuracy() {
   // TODO: Complete this function
   let typedCharacterFalse = document.getElementsByClassName('incorrect-char').length
   let typedCharacterTrue = document.getElementsByClassName('correct-char').length
-  let typedCharacter = typedCharacterFalse + typedCharacterTrue
-  let accuracy = (typedCharacter - typedCharacterFalse) / 100
-  return Math.round(accuracy)
+  typedCharacter = typedCharacterFalse + typedCharacterTrue
+  accuracy = (typedCharacter - typedCharacterFalse) / typedCharacter
+  accuracyText.innerText = Math.round(accuracy * 100)
 }
 
 function updateErrors() {
   // TODO: Complete this function
-  
+  errorText.innerText = errors
 }
 
 function updateWpm() {
   // TODO: Complete this function
 
-  let charTrue = document.getElementByClassName("correct-char")
-  let charFalse = document.getElementByClassName("incorrect-char")
-  let allChar = charFalse+charTrue
-  let x =allChar/5
-  let y =x/timeElapsed
-  let wpm=y*60
-  wpmText.innerText = `${wpm}`
+// <<<<<<< HEAD
+//   let charTrue = document.getElementByClassName("correct-char")
+//   let charFalse = document.getElementByClassName("incorrect-char")
+//   let allChar = charFalse+charTrue
+//   let x =allChar/5
+//   let y =x/timeElapsed
+//   let wpm=y*60
+//   wpmText.innerText = `${wpm}`
 
+
+  // let charTrue = document.getElementByClassName("correct-char").length;
+  // let charFalse = document.getElementByClassName("incorrect-char").length;
+  // // let allChar = charFalse+charTrue
+  // let x =allChar/5
+  // let y =x/timeElapsed
+  // let wpm=y*60
+  //   return wpmText.innerText = `${wpm}`
+  // if (timeLeft == 0) {
+  wpm = Math.round((((typedCharacter / 5) / timeElapsed) * 60));
+  // }
+  // updateTimer()
+  // wpmText.innerText = `${wpm}`;
+// >>>>>>> dev
 }
 
 function updateTimer() {
-  // TODO: Complete this function
+  // TODO: Complete this functio
+  if (timeLeft > 0) {
+    timeLeft--;
+    timeElapsed++;
+    timerText.textContent = timeLeft;
+  }
+  else {
+    wpmText.innerText = `${wpm}`;
+    finishTest();
+  }
 }
 
 function finishTest() {
   // TODO: Complete this function
+  clearInterval(timer);
+  textArea.disabled = true;
+
+  // let wpm = Math.round((((typedCharacter / 5) / timeElapsed) * 60));
+  // wpmText.innerText = `${wpm}`;
+  
 }
